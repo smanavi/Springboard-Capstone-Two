@@ -1,6 +1,6 @@
 Capstone Two: Optimizing HIV/AIDS related tweets for increased engagement
 ==============================
-The second capstone project for Springboard's Data Science track.
+The second capstone project for Springboard's Data Science track. Currently still in progress.
 
 Author: Sahar Manavi
 
