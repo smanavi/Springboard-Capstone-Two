@@ -24,7 +24,7 @@ var/
 *.egg
 
 data_files/*
-twitter_api_access.py
+scripts/twitter_api_access.py
 unused_old_notebooks/*
 
 # PyInstaller
