@@ -1,7 +1,12 @@
 import os
 import json
 import pandas as pd
-from . import twitter_api_access
+
+with open(r"..\path.txt") as p:
+    path = p.readlines()[0]
+import sys
+sys.path.append(path)
+import twitter_api_access
 
 api = twitter_api_access.access_api()
 

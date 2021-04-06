@@ -2,13 +2,14 @@ import os
 import tweepy
 import json
 from datetime import datetime, timedelta, timezone
-# from . import twitter_api_access
-#
-# api = twitter_api_access.access_api()
 
-def test_sys_things():
-    import sys
-    print(sys.path)
+with open(r"..\path.txt") as p:
+    path = p.readlines()[0]
+import sys
+sys.path.append(path)
+import twitter_api_access
+
+
 
 def api_search(query, filename, todate=None, n_items=500, return_dict=False):
     '''searches and saves a json of search results for a particular query using the standard twitter api search.
@@ -20,9 +21,8 @@ def api_search(query, filename, todate=None, n_items=500, return_dict=False):
         return_dict: bool, whether to return the dictionary item created
     returns:
         dictionary item if return_dict set to True
-
     '''
-
+    api = twitter_api_access.access_api()
     cursor = tweepy.Cursor(api.search, q=query, until=todate, tweet_mode='extended').items(n_items)
 
     tweets = {}
@@ -49,12 +49,13 @@ def api_advanced_search(query, filename, which_api, todate=None, fromdate=None, 
         dictionary item if return_dict set to True
 
     '''
+    api = twitter_api_access.access_api()
     if which_api == "30day":
         API = api.search_30_day
-        env = '30day'
+        env = '30dayarchive2'
     elif which_api == "full":
         API = api.search_full_archive
-        env = 'full'
+        env = 'fullarchive2'
 
     cursor = tweepy.Cursor(API,
                            environment_name= env,
@@ -68,6 +69,10 @@ def api_advanced_search(query, filename, which_api, todate=None, fromdate=None, 
     tweets = {}
     for n,t in enumerate(cursor):
         tweets[n] = t._json
+        if t.truncated:
+            tweets[n]['extended_text'] = t.extended_tweet['full_text']
+        else:
+            pass
     tweets['query'] = query
 
     with open(filename, 'w') as j:
@@ -90,7 +95,7 @@ def timestamp_to_toDate(timestamp):
 
 
 def access_api():
-    """This is here to illustrate the way I access the twitter API, but the function with my access
+    """This is here to illustrate the way I access the twitter API, but the function with my access tokens is elsewhere
     Access_token = ""
     Access_token_secret = ""
     Bearer_token = ""
