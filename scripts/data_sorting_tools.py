@@ -23,31 +23,36 @@ def json_to_df(file, keys, get_media=True, return_dict=False):
     main_dict = {}
     for mainkey in doc.keys():
         temp = {}
+        if ("retweeted_status" in doc[mainkey].keys())==True:
+#             temp['retweet_of'] = doc[mainkey]["retweeted_status"]['id']
+            root = doc[mainkey]["retweeted_status"]
+        else:
+            root = doc[mainkey]
+
         for k in keys:
+            if k=='text':
+                try:
+                    temp["extended_text"] = root["extended_text"]
+                except:
+                    temp['text'] = root['text']
+
             if type(k) is tuple:
                 key = "{}_{}".format(k[0], k[1])
-                temp[key] = doc[mainkey][k[0]][k[1]]
-            # elif ("text" in k)==True:
-            #     try:
-            #         temp[k] = doc[mainkey]["full_text"]
-            #     except:
-            #         temp[k] = doc[mainkey][k]
+                temp[key] = root[k[0]][k[1]]
             else:
-                temp[k] = doc[mainkey][k]
-            # try:
-            #     temp[k] = doc[mainkey]["full_text"]
-            # except:
-            #     pass
+                temp[k] = root[k]
 
-        tid = doc[mainkey]['id']
+        if get_media==True:
+            if "extended_entities" in root.keys():
+                temp['media_count'] = len(root['extended_entities']['media'])
+                temp['media_types'] = root['extended_entities']['media'][0]['type']
+
+
+        tid = root['id']
         main_dict[tid] = temp
-
     df = pd.DataFrame(main_dict).T
-    if get_media==True:
-        media_df = get_media_info(doc)
-        df = pd.concat([df, media_df], axis=1)
-        df['media_count'] = df['media_count'].fillna(0)
-        df['media_types'] = df['media_types'].fillna('none')
+    df['media_count'] = df['media_count'].fillna(0)
+    df['media_types'] = df['media_types'].fillna('none')
 
     if return_dict == True:
         return df, main_dict
