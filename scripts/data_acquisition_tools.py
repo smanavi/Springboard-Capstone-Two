@@ -101,7 +101,7 @@ def access_api():
     Bearer_token = ""
     Consumer_key = ""
     Consumer_key_secret = ""
-    keys is stored elsewhere."""
+    keys are stored elsewhere."""
 
     auth = tweepy.OAuthHandler(Consumer_key, Consumer_key_secret)
     auth.set_access_token(Access_token, Access_token_secret)
